@@ -72,3 +72,6 @@ http {
         }
     }
 }
+==============================
+Grafana query
+rate(http_requests_total{job="flask"}[1m])

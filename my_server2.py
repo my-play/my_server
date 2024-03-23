@@ -1,6 +1,7 @@
 import sqlite3
 
 from flask import Flask, render_template, redirect, Response, jsonify
+from prometheus_client import start_http_server, Counter
 from flask_restx import Api, Resource
 from flask_swagger_ui import get_swaggerui_blueprint
 import requests
@@ -10,7 +11,9 @@ import os
 # from flask_sslify import SSLify
 app = Flask(__name__, template_folder='templates')
 api = Api(app, version='1.0', title='My Server Doc Swagger', description='My Playground :)')
+REQUEST_COUNT = Counter('http_requests_total', 'Total HTTP Requests')
 # sslify = SSLify(app)
+
 
 SWAGGER_URL = '/swagger'
 API_URL = '/swagger.json'
@@ -31,6 +34,7 @@ add_data_parser.add_argument('price', type=float, required=True, help='The price
 
 @app.route('/')
 def home():
+    REQUEST_COUNT.inc()
     return Response(render_template('index.html', mimetype='text/html'))
 
 
@@ -105,9 +109,12 @@ def get_data():
             'time': row[2],
             'price': row[3]
         })
-
     return jsonify(data)
 
+@app.route('/metrics')
+def metrics():
+    return REQUEST_COUNT._name + ' ' + str(REQUEST_COUNT._value.get())
 
 if __name__ == '__main__':
+    # start_http_server(5001)
     app.run(debug=True, host='0.0.0.0')

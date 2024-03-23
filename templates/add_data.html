@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Add Bitcoin Data</title>
+</head>
+<body>
+    <h1>Add Bitcoin Data</h1>
+    <form action="/add_data" method="post">
+        <label for="date">Date:</label>
+        <input type="date" id="date" name="date" required><br><br>
+        <label for="time">Time:</label>
+        <input type="time" id="time" name="time" required><br><br>
+        <label for="price">Price:</label>
+        <input type="number" id="price" name="price" step="0.01" required><br><br>
+        <input type="submit" value="Submit">
+    </form>
+</body>
+</html>
