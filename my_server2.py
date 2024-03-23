@@ -18,7 +18,7 @@ swagger_blueprint = get_swaggerui_blueprint(
     SWAGGER_URL,
     API_URL,
     config={
-        'app_name': "Bitcoin Value Checker"
+        'app_name': "ex1-devops"
     }
 )
 
