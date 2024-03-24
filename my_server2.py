@@ -1,7 +1,9 @@
 import sqlite3
-
+from prometheus_client import make_wsgi_app, Counter, Histogram
+from werkzeug.middleware.dispatcher import DispatcherMiddleware
+from prometheus_client import start_http_server, Counter, Gauge
 from flask import Flask, render_template, redirect, Response, jsonify
-from prometheus_client import start_http_server, Counter
+# from prometheus_client import start_http_server, Counter
 from flask_restx import Api, Resource
 from flask_swagger_ui import get_swaggerui_blueprint
 import requests
@@ -11,6 +13,14 @@ import os
 # from flask_sslify import SSLify
 app = Flask(__name__, template_folder='templates')
 api = Api(app, version='1.0', title='My Server Doc Swagger', description='My Playground :)')
+# Create a counter metric to count requests
+
+app.wsgi_app = DispatcherMiddleware(app.wsgi_app, {
+    '/metrics': make_wsgi_app()})
+
+
+# Create a gauge metric to measure system memory usage
+memory_usage = Gauge('memory_usage_in_bytes', 'System Memory Usage')
 REQUEST_COUNT = Counter('http_requests_total', 'Total HTTP Requests')
 # sslify = SSLify(app)
 
@@ -45,6 +55,7 @@ class BitcoinValue(Resource):
         response = requests.get(url)
         data = response.json()
         price_usd = data['USD']['last']
+        # REQUEST_COUNT.labels('GET', '/bitcoin_value', 200).inc()
         return "Price now: "+str(price_usd)
 
 
