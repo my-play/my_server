@@ -74,4 +74,5 @@ http {
 }
 ==============================
 Grafana query
-rate(http_requests_total{job="flask"}[1m])
+rate(http_requests_total{job="app"}[1m])
+rate(process_cpu_seconds_total[30s])
